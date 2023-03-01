@@ -2,8 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Hello World!</title>
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <title>Algoritmo de Kruskal</title>
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self'"
@@ -12,10 +11,19 @@
       http-equiv="X-Content-Security-Policy"
       content="default-src 'self'; script-src 'self'"
     />
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <section class="indicationsArea"></section>
+    <section class="indicationsArea">
+      <h1 class="formatText">
+        En el area marcada en recuadro da click en cualquier espacio para añadir
+        un nuevo nodo. Para añadir conexiones entre nodos, da click a un nodo y
+        después a otro nodo. Por defecto la conexión tendrá un valor de "1".
+        Para cambiarlo, da click en la union e ingresa un valor numérico valido.
+        Da click en "Calcular Árbol Mínimo" para resaltar en verde el árbol
+        mínimo, y en rojo todos los nodos no utilizados
+      </h1>
+    </section>
     <section class="drawArea" id="drawArea"></section>
     <section class="actionArea"></section>
     <!-- You can also require other files to run in this process -->

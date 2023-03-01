@@ -14,7 +14,7 @@ body > section.indicationsArea {
   background: #afafaf;
   min-width: 100vw;
   width: 100vw;
-  height: 100px;
+  height: 135px;
 }
 
 body > section.drawArea {
@@ -29,5 +29,12 @@ body > section.actionArea {
   background: #3f4375;
   min-width: 100vw;
   width: 100vw;
-  height: 100px;
+  height: 75px;
+}
+
+.formatText {
+  max-width: 960px;
+  margin: 10px;
+  text-align: justify;
+  font-size: 1rem;
 }
