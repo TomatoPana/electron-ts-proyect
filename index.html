@@ -12,14 +12,13 @@
       http-equiv="X-Content-Security-Policy"
       content="default-src 'self'; script-src 'self'"
     />
+    <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>, Chromium
-    <span id="chrome-version"></span>, and Electron
-    <span id="electron-version"></span>.
-
+    <section class="indicationsArea"></section>
+    <section class="drawArea" id="drawArea"></section>
+    <section class="actionArea"></section>
     <!-- You can also require other files to run in this process -->
-    <script src="./dist/renderer.js"></script>
+    <script defer src="./dist/renderer.js"></script>
   </body>
 </html>
