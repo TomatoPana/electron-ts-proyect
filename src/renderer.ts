@@ -1,10 +1,33 @@
 const drawArea = document.getElementById("drawArea");
 
-const nodes = [];
+const nodes: Array<renderer.Node> = [];
 
 let selected: HTMLElement | null = null;
 
 var number = 64;
+
+namespace renderer {
+  export class Node {
+    private DOMElement: HTMLElement;
+    private Connections: { target: HTMLElement; edgeValue: number }[];
+
+    constructor(DOMElement: HTMLElement) {
+      this.DOMElement = DOMElement;
+      this.Connections = [];
+    }
+
+    public isDisconnected() {
+      return this.Connections.length === 0;
+    }
+
+    public addConnection(target: HTMLElement, edgeValue: number = 1) {
+      this.Connections.push({
+        target,
+        edgeValue,
+      });
+    }
+  }
+}
 
 drawArea.addEventListener("click", (event: MouseEvent) => {
   if (selected !== null) {
@@ -12,6 +35,7 @@ drawArea.addEventListener("click", (event: MouseEvent) => {
     selected = null;
     return;
   }
+
   const element = document.createElement("div");
   console.log(event);
   element.style.left = (event.clientX - 15).toString() + "px";
@@ -28,22 +52,13 @@ drawArea.addEventListener("click", (event: MouseEvent) => {
   element.style.background = "#ccc";
   element.style.userSelect = "none";
   element.innerText = "A";
-  element.addEventListener("click", (event) => {
-    event.stopPropagation();
-    if (selected !== null) {
-      // Se crea una union entre los elementos
-      selected.style.borderWidth = "1px";
-      selected = null;
-    }
-    element.style.borderWidth = "3px";
-    selected = element;
-  });
 
   let newPosX = 0,
     newPosY = 0,
     startPosX = 0,
     startPosY = 0;
   function mouseMove(event: MouseEvent) {
+    console.count("mouseMove");
     // calculate the new position
     newPosX = startPosX - event.clientX;
     newPosY = startPosY - event.clientY;
@@ -57,6 +72,7 @@ drawArea.addEventListener("click", (event: MouseEvent) => {
     element.style.left = element.offsetLeft - newPosX + "px";
   }
   element.addEventListener("mousedown", (event) => {
+    console.count("mouseDown");
     event.preventDefault();
     event.stopPropagation();
     if (selected !== null) {
@@ -69,14 +85,17 @@ drawArea.addEventListener("click", (event: MouseEvent) => {
     startPosX = event.clientX;
     startPosY = event.clientY;
 
-    document.addEventListener("mousemove", mouseMove);
-
-    document.addEventListener("mouseup", function () {
-      document.removeEventListener("mousemove", mouseMove);
-    });
+    document.onmousemove = mouseMove;
   });
 
+  document.onmouseup = function (event) {
+    event.stopPropagation();
+    console.count("MouseUp");
+    document.onmousemove = null;
+  };
+
   drawArea.appendChild(element);
+  nodes.push(new renderer.Node(element));
 });
 
 document.addEventListener("keyup", (event) => {
