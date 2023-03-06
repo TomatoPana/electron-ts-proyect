@@ -1,10 +1,14 @@
 const drawArea = document.getElementById("drawArea");
+const calcularArbol = document.getElementById("calcularArbol");
+const reiniciarGrafo = document.getElementById("reiniciarGrafo");
+const limpiar = document.getElementById("limpiar");
 
 const nodes: Array<renderer.Node> = [];
+const edges: Array<renderer.Edge> = [];
 
 let selected: HTMLElement | null = null;
 
-var number = 64;
+let emittedByNode = false;
 
 namespace renderer {
   export class Node {
@@ -27,9 +31,38 @@ namespace renderer {
       });
     }
   }
+
+  export class Edge {}
+}
+
+function connectNodes(origin: HTMLDivElement, target: HTMLDivElement) {
+  // TODO: Verificar si la conexión ya se hizo, y si se hizo, abortar.
+  const x1 = origin.offsetLeft + 15;
+  const y1 = origin.offsetTop + 15;
+  const x2 = target.offsetLeft + 15;
+  const y2 = target.offsetTop + 15;
+  const length = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+  const thickness = 5;
+  const cx = (x1 + x2) / 2 - length / 2;
+  const cy = (y1 + y2) / 2 - thickness / 2;
+  const angle = Math.atan2(y1 - y2, x1 - x2) * (180 / Math.PI);
+
+  const newLine = document.createElement("div");
+  newLine.classList.add("line");
+  newLine.style.left = `${cx}px`;
+  newLine.style.top = `${cy}px`;
+  newLine.style.width = `${length}px`;
+  newLine.style.transform = `rotate(${angle}deg)`;
+
+  drawArea.appendChild(newLine);
 }
 
 drawArea.addEventListener("click", (event: MouseEvent) => {
+  if (emittedByNode) {
+    // Se dio click en un nodo y no en el area, abortar
+    emittedByNode = false;
+    return;
+  }
   if (selected !== null) {
     selected.style.borderWidth = "1px";
     selected = null;
@@ -37,20 +70,9 @@ drawArea.addEventListener("click", (event: MouseEvent) => {
   }
 
   const element = document.createElement("div");
-  console.log(event);
   element.style.left = (event.clientX - 15).toString() + "px";
-  element.style.top = (event.clientY - 150).toString() + "px";
-  element.style.borderRadius = "50%";
-  element.style.border = "black solid 1px";
-  element.style.width = "30px";
-  element.style.height = "30px";
-  element.style.position = "absolute";
-  element.style.alignItems = "center";
-  element.style.justifyContent = "center";
-  element.style.display = "flex";
-  element.style.zIndex = "2";
-  element.style.background = "#ccc";
-  element.style.userSelect = "none";
+  element.style.top = (event.clientY - 127).toString() + "px";
+  element.classList.add("node");
   element.innerText = "A";
 
   let newPosX = 0,
@@ -72,12 +94,14 @@ drawArea.addEventListener("click", (event: MouseEvent) => {
     element.style.left = element.offsetLeft - newPosX + "px";
   }
   element.addEventListener("mousedown", (event) => {
+    emittedByNode = true;
     console.count("mouseDown");
     event.preventDefault();
     event.stopPropagation();
     if (selected !== null) {
       // Se crea una union entre los elementos
       selected.style.borderWidth = "1px";
+      connectNodes(selected as HTMLDivElement, event.target as HTMLDivElement);
       selected = null;
     }
     element.style.borderWidth = "3px";
@@ -85,13 +109,13 @@ drawArea.addEventListener("click", (event: MouseEvent) => {
     startPosX = event.clientX;
     startPosY = event.clientY;
 
-    document.onmousemove = mouseMove;
+    drawArea.onmousemove = mouseMove;
   });
 
-  document.onmouseup = function (event) {
+  drawArea.onmouseup = function (event) {
     event.stopPropagation();
     console.count("MouseUp");
-    document.onmousemove = null;
+    drawArea.onmousemove = null;
   };
 
   drawArea.appendChild(element);
@@ -116,3 +140,18 @@ document.addEventListener("keyup", (event) => {
       break;
   }
 });
+
+calcularArbol.onclick = function () {
+  //TODO: Calcular algoritmo y generar las dos listas, uniones validas y uniones para descartar
+};
+
+reiniciarGrafo.onclick = function () {
+  //TODO: Reinicia el grafo a su estado anterior (Sin el árbol mínimo).
+};
+
+limpiar.onclick = () => {
+  if (!confirm("Estas seguro de borrar el lienzo?")) return;
+  drawArea.innerHTML = "";
+  nodes.length = 0;
+  edges.length - 0;
+};

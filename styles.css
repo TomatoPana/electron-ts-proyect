@@ -14,7 +14,7 @@ body > section.indicationsArea {
   background: #afafaf;
   min-width: 100vw;
   width: 100vw;
-  height: 135px;
+  height: 112px;
 }
 
 body > section.drawArea {
@@ -34,7 +34,31 @@ body > section.actionArea {
 
 .formatText {
   max-width: 960px;
-  margin: 10px;
+  margin: 10px auto;
   text-align: justify;
   font-size: 1rem;
+}
+
+.node {
+  border-radius: 50%;
+  border: black solid 1px;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  z-index: 16;
+  background: #ccc;
+  user-select: none;
+}
+
+.line {
+  padding: 0px;
+  margin: 0px;
+  height: 5px;
+  background-color: #000;
+  line-height: 1px;
+  position: absolute;
+  z-index: 8;
 }
