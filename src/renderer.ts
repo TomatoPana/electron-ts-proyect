@@ -1,39 +1,13 @@
+import Node from "./Node.js";
+
 const drawArea = document.getElementById("drawArea");
 const calcularArbol = document.getElementById("calcularArbol");
 const reiniciarGrafo = document.getElementById("reiniciarGrafo");
 const limpiar = document.getElementById("limpiar");
 
-const nodes: Array<renderer.Node> = [];
-const edges: Array<renderer.Edge> = [];
-
 let selected: HTMLElement | null = null;
 
 let emittedByNode = false;
-
-namespace renderer {
-  export class Node {
-    private DOMElement: HTMLElement;
-    private Connections: { target: HTMLElement; edgeValue: number }[];
-
-    constructor(DOMElement: HTMLElement) {
-      this.DOMElement = DOMElement;
-      this.Connections = [];
-    }
-
-    public isDisconnected() {
-      return this.Connections.length === 0;
-    }
-
-    public addConnection(target: HTMLElement, edgeValue: number = 1) {
-      this.Connections.push({
-        target,
-        edgeValue,
-      });
-    }
-  }
-
-  export class Edge {}
-}
 
 function connectNodes(origin: HTMLDivElement, target: HTMLDivElement) {
   // TODO: Verificar si la conexión ya se hizo, y si se hizo, abortar.
@@ -57,6 +31,8 @@ function connectNodes(origin: HTMLDivElement, target: HTMLDivElement) {
   drawArea.appendChild(newLine);
 }
 
+let id = 1;
+
 drawArea.addEventListener("click", (event: MouseEvent) => {
   if (emittedByNode) {
     // Se dio click en un nodo y no en el area, abortar
@@ -73,7 +49,10 @@ drawArea.addEventListener("click", (event: MouseEvent) => {
   element.style.left = (event.clientX - 15).toString() + "px";
   element.style.top = (event.clientY - 127).toString() + "px";
   element.classList.add("node");
-  element.innerText = "A";
+  element.innerText = id.toString();
+  element.dataset.identifier = id.toString();
+  const node = new Node(id);
+  id++;
 
   let newPosX = 0,
     newPosY = 0,
@@ -92,6 +71,9 @@ drawArea.addEventListener("click", (event: MouseEvent) => {
     // set the element's new position:
     element.style.top = element.offsetTop - newPosY + "px";
     element.style.left = element.offsetLeft - newPosX + "px";
+
+    // Iterar por todas las conexiones que tenga el elemento para poder actualizar los componentes
+    element.dataset.id;
   }
   element.addEventListener("mousedown", (event) => {
     emittedByNode = true;
@@ -119,7 +101,6 @@ drawArea.addEventListener("click", (event: MouseEvent) => {
   };
 
   drawArea.appendChild(element);
-  nodes.push(new renderer.Node(element));
 });
 
 document.addEventListener("keyup", (event) => {
@@ -152,6 +133,6 @@ reiniciarGrafo.onclick = function () {
 limpiar.onclick = () => {
   if (!confirm("Estas seguro de borrar el lienzo?")) return;
   drawArea.innerHTML = "";
-  nodes.length = 0;
-  edges.length - 0;
 };
+
+export default {};
