@@ -28,7 +28,13 @@ function connectNodes(origin: HTMLDivElement, target: HTMLDivElement) {
   newLine.style.width = `${length}px`;
   newLine.style.transform = `rotate(${angle}deg)`;
 
+  const valueField = document.createElement("input");
+  valueField.classList.add("field");
+  valueField.style.left = `${cx}px`;
+  valueField.style.top = `${cy}px`;
+
   drawArea.appendChild(newLine);
+  drawArea.appendChild(valueField);
 }
 
 let id = 1;
