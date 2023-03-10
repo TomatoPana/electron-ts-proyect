@@ -25,10 +25,28 @@ class Graph {
   }
 
   /**
+   * Busca el nodo dado el ID en el grafo
+   * @param nodeId ID del nodo dentro del grafo
+   * @returns `Node` si existe el nodo, `undefined` sino.
+   */
+  getNode(nodeId: number) {
+    return this.nodes.get(nodeId);
+  }
+
+  /**
+   * Obtiene la lista de todos los nodos del grafo
+   * 
+   * @returns Todos los nodos del grafo
+   */
+  getAllNodes(): Array<Node> {
+    return Array.from(this.nodes.values());
+  }
+
+  /**
    * Añade un nodo al grafo, si el nodo ya existe, no se modifica el grafo
    * @param node El nodo a agregar
    */
-  addVertex(node: Node) {
+  addVertex(node: Node): void {
     // Si el nodo ya existe, abortar
     if (this.nodes.has(node.id)) return;
 
@@ -36,10 +54,10 @@ class Graph {
   }
 
   /**
-   * Elimina un nodo del grafo
+   * Elimina un nodo del grafo. Si el nodo conecta a otros nodos, las conexiones también se eliminan
    * @param node El nodo a eliminar
    */
-  removeVertex(node: number | Node) {
+  removeVertex(node: number | Node): void {
     const current = node instanceof Node ? node.id : node;
     if (!this.nodes.has(current)) return;
 
@@ -106,6 +124,14 @@ class Graph {
     this.edges.delete(edgeKey);
   }
 
+  /**
+   * Determina si dos nodos se encuentran conectados.
+   * 
+   * `Source` y `Destination` son intercambiables dado a que el grafo no es dirigido
+   * @param source Nodo de inicio
+   * @param destination Nodo de fin
+   * @returns `true` si están conectados, `false` de lo contrario
+   */
   areAdjacents(source: number | Node, destination: number | Node) {
     const sourceId = source instanceof Node ? source.id : source;
     const destinationId =

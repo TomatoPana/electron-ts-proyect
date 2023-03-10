@@ -1,4 +1,5 @@
 import Node from "./Node.js";
+import Graph from "./Graph.js";
 
 const drawArea = document.getElementById("drawArea");
 const calcularArbol = document.getElementById("calcularArbol");
@@ -7,10 +8,24 @@ const limpiar = document.getElementById("limpiar");
 
 let selected: HTMLElement | null = null;
 
+const mainGraph = new Graph();
+const spanningTree = new Graph(); // Usar Grafo como Arbol para el calculo del resultado.
+
 let emittedByNode = false;
+let nodeId = 1;
 
 function connectNodes(origin: HTMLDivElement, target: HTMLDivElement) {
   // TODO: Verificar si la conexión ya se hizo, y si se hizo, abortar.
+  if (origin === target) return; // No conectar el mismo punto
+
+  if (
+    mainGraph.areAdjacents(
+      Number.parseInt(origin.dataset.identifier),
+      Number.parseInt(target.dataset.identifier)
+    )
+  )
+    return;
+
   const x1 = origin.offsetLeft + 15;
   const y1 = origin.offsetTop + 15;
   const x2 = target.offsetLeft + 15;
@@ -30,14 +45,35 @@ function connectNodes(origin: HTMLDivElement, target: HTMLDivElement) {
 
   const valueField = document.createElement("input");
   valueField.classList.add("field");
-  valueField.style.left = `${cx}px`;
-  valueField.style.top = `${cy}px`;
+  valueField.style.left = `${(x1 + x2) / 2 - 10}px`;
+  valueField.style.top = `${(y1 + y2) / 2 - 10}px`;
+  valueField.style.width = "20px";
+  valueField.onclick = (e) => {
+    e.stopPropagation();
+    if (selected !== null) {
+      selected.style.borderWidth = "1px";
+      selected = null;
+      return;
+    }
+  };
+
+  valueField.onkeyup = (e) => {
+    if (e.code === "Escape") {
+      // El usuario quiere perder el foco del elemento. Restaurar el dato previamente guardado y salir
+      (e.target as HTMLInputElement).blur();
+      return;
+    }
+    const value = (e.target as HTMLInputElement).value;
+  };
 
   drawArea.appendChild(newLine);
   drawArea.appendChild(valueField);
+  mainGraph.addEdge(
+    Number.parseInt(origin.dataset.identifier), 
+    Number.parseInt(target.dataset.identifier), 
+    1
+  );
 }
-
-let id = 1;
 
 drawArea.addEventListener("click", (event: MouseEvent) => {
   if (emittedByNode) {
@@ -55,10 +91,10 @@ drawArea.addEventListener("click", (event: MouseEvent) => {
   element.style.left = (event.clientX - 15).toString() + "px";
   element.style.top = (event.clientY - 127).toString() + "px";
   element.classList.add("node");
-  element.innerText = id.toString();
-  element.dataset.identifier = id.toString();
-  const node = new Node(id);
-  id++;
+  element.innerText = nodeId.toString();
+  element.dataset.identifier = nodeId.toString();
+  const node = new Node(nodeId);
+  nodeId++;
 
   let newPosX = 0,
     newPosY = 0,
@@ -79,7 +115,11 @@ drawArea.addEventListener("click", (event: MouseEvent) => {
     element.style.left = element.offsetLeft - newPosX + "px";
 
     // Iterar por todas las conexiones que tenga el elemento para poder actualizar los componentes
-    element.dataset.id;
+    const node = mainGraph.getNode(Number.parseInt(element.dataset.nodeId));
+    const adjacents = node.getAdjacents();
+    adjacents.forEach(adjacent => {
+      
+    });
   }
   element.addEventListener("mousedown", (event) => {
     emittedByNode = true;
@@ -98,6 +138,7 @@ drawArea.addEventListener("click", (event: MouseEvent) => {
     startPosY = event.clientY;
 
     drawArea.onmousemove = mouseMove;
+    mainGraph.addVertex(node);
   });
 
   drawArea.onmouseup = function (event) {
